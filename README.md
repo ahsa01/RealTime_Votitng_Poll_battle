@@ -1,4 +1,4 @@
-# 🗳️ Real-Time Polling App
+# 🗳️ Real‑Time Voting App
 
 A lightweight, real-time polling app where users can join a shared room, vote on one of two options (e.g., "Cats vs Dogs"), and see live results. Built using **React** for the frontend and **Node.js** with **WebSocket (Socket.IO)** on the backend.
 
@@ -8,8 +8,8 @@ A lightweight, real-time polling app where users can join a shared room, vote on
 
 ### ✅ Frontend (ReactJS)
 - Users can **enter a unique name** and either:
-  - Create a new poll room
-  - Join an existing room via a room code
+  - **Create a new poll room**, or
+  - **Join an existing room** via a room code
 - Displays a simple **poll question with two options**
 - Allows voting for **one option only**; disables further votes after submission
 - **Real-time vote updates** across all clients using WebSocket
@@ -27,62 +27,70 @@ A lightweight, real-time polling app where users can join a shared room, vote on
 
 ## 📁 Project Structure
 
-
-
+```plaintext
+.
+├── client/                 # React front‑end
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   └── App.jsx
+│   └── package.json
+├── server/                # Node.js backend
+│   ├── index.js           # Express + Socket.io server
+│   └── package.json
+└── README.md
 ---
-
-## 🚀 Getting Started
-
-### 1. Clone the repository
-```bash
+🚀 Getting Started
+---
+1️⃣ Clone the Repository
 git clone https://github.com/your-username/realtime-polling-app.git
 cd realtime-polling-app
-
-# Install server dependencies
+---
+2️⃣ Install Dependencies
+# Backend
 cd server
 npm install
 
-# Install client dependencies
+# Frontend
 cd ../client
 npm install
-
-# Start backend
-cd server
+---
+3️⃣ Run the App
+# Start backend (from /server)
+cd ../server
 node index.js
-
-# Start frontend
+---
+# Start frontend (from /client)
 cd ../client
 npm start
+---
+ Vote State Sharing & Room Management
+ When a user joins a room:
+---
+Their socket connects via:
 
-🧠 Vote State Sharing & Room Management
-When a user joins a room:
+socket.join(roomCode);
+---
 
-Their socket joins via socket.join(roomCode)
+The server maintains in-memory room state:
 
-Server stores room info in an in-memory object:
 const rooms = {
-  roomCode123: {
-    question: 'Cats vs Dogs',
-    votes: { user1: 'Cats', user2: 'Dogs' },
-    timer: 60, // seconds
+  "roomABC": {
+    question: "Cats vs Dogs",
+    votes: { "user1": "Cats", "user2": "Dogs" },
+    timer: 60,
     hasEnded: false
   }
-}
-When voting:
+};
 
-The user's vote is stored
+On vote submission:
 
-A voteUpdate event is emitted to all clients in the room
+User's vote is stored in the votes object
+
+Server emits a voteUpdate event to all clients in the room
 
 After 60 seconds:
 
-The room is locked
+hasEnded is set to true
 
-A votingEnded event is broadcast to freeze UI and show results
-
-📜 License
-MIT License. ashajyothi
-
----
-
-Would you like me to also generate a simple `index.js` for the Node.js WebSocket server or a basic React page for room creation and voting?
+A votingEnded event is sent to all clients to lock the UI and show final results
